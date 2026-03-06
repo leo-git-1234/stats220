@@ -22,4 +22,4 @@ A meme that captures how I currently feel about my university studies is![](http
 *STATS 220 is also a very interesting course to learn*
 
 [Here is my GitHub repository](https://github.com/leo-git-1234/stats220)
-[This is my GIF](https://media.itsnicethat.com/original_images/giphy-2021-gifs-and-clips-animation-itsnicethat-02.gif)
+![This is my GIF](https://media.itsnicethat.com/original_images/giphy-2021-gifs-and-clips-animation-itsnicethat-02.gif)
