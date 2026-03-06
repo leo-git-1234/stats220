@@ -18,7 +18,7 @@ A meme that captures how I currently feel about my university studies is![](http
 - I find that R code is interesting to learn.
 - I find that R code is much easier to understand than Python.
 
-** STATS 220 is a fun course**
+**STATS 220 is a fun course**
 *STATS 220 is also a very interesting course to learn*
 
 [Here is my GitHub repository](https://github.com/leo-git-1234/stats220)
