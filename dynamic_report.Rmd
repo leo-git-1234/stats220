@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
 
 body{
   font-family: "Segoe UI", "Helvetica", "Arial", sans-serif;
-  color: #f5f5f5
+  color: #f5f5f5;
   line-height: 1.6;
   margin: 20px;
 }
