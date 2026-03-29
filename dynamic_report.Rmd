@@ -65,7 +65,7 @@ latest_data <- logged_data %>%
     Time = `Time of observation`,
     Phone_Users = `How many passengers are using their phones?`,
     Total_Passengers = `How many passengers can you see on the bus?`,
-    Unusual_Observations = `Any unusual observations or notes.`
+    Unusual_Observations = `Any unusual observations or notes?`
   ) %>%
   mutate(Phone_Percent = ifelse(
     Total_Passengers > 0, 
