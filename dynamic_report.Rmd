@@ -1,0 +1,144 @@
+---
+title: My dynamic report
+output: html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+
+```
+
+```{css}
+
+body{
+  font-family: "Segoe UI", "Helvetica", "Arial", sans-serif;
+  color: black;
+  line-height: 1.6;
+  margin: 20px;
+}
+
+h1{
+  font-size: 32px;
+  color: black;
+}
+
+h2{
+  font-size: 24px;
+  color: black;
+}
+
+h3{
+  font-size: 20px;
+  color: black;
+}
+
+p{
+  font-size: 16px;
+}
+
+img{
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.dynamic-text{
+  color: black;
+  font-weight: bold;
+}
+
+```
+
+## Observing Phone Use Among Bus Passengers
+
+```{r data_prep, error=FALSE}
+
+# Load necessary libraries for data manipulation and visualization
+suppressPackageStartupMessages(try(library(tidyverse), silent = TRUE)) # Load the tidyverse package
+
+# Read the CSV data from the provided Google Sheets link
+logged_data <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTeLDMHtbbSEKTXmlMHI_Xx56G79uUAATt1yyA4Q4eS5xRcV92sRXacFiX0nF8PNBGX_dTS03ihS4Kv/pub?gid=1547770&single=true&output=csv")
+
+# Rename columns to simpler, R-friendly names for easier reference
+latest_data <- logged_data %>%
+  rename(
+    Date = `Date of observation`,
+    Time = `Time of observation`,
+    Phone_Users = `How many passengers are using their phones?`,
+    Total_Passengers = `How many passengers can you see on the bus?`,
+    Unusual_Observations = `Any unusual observations or notes?`
+  ) %>%
+  mutate(Phone_Percent = ifelse(
+    Total_Passengers > 0, 
+    (Phone_Users / Total_Passengers) * 100,
+    NA
+  ))
+
+# Convert the Time column to a factor so that each observation has its own bar in the plots
+latest_data$Time <- factor(latest_data$Time, levels = unique(latest_data$Time))
+
+
+```
+
+# Summary statistics
+
+```{r summary, echo=FALSE, results='asis'}
+
+# Summary statistics for amount of people using phones
+avg_users <- mean(latest_data$Phone_Users, na.rm = TRUE) # Average number of passengers using phones
+
+comment1 <- paste0("On average, about ", round(avg_users), " passengers on the bus were using their phones.")
+cat(comment1, "\n")
+
+max_users <- max(latest_data$Phone_Users, na.rm = TRUE) # Maximum number of passengers using phones
+
+comment2 <- paste0("The maximum number of passengers observed using phones on the bus was ", max_users, ".")
+cat(comment2, "\n")
+
+# Calculate summary statistics percentage of people using phones
+avg_percent <- mean(latest_data$Phone_Percent, na.rm = TRUE) # Average phone usage percent
+
+comment3 <- paste0("On average, about ", round(avg_percent, 1), "% of passengers on the bus were using their phones.")
+cat(comment3, "\n")
+
+max_percent <- max(latest_data$Phone_Percent, na.rm = TRUE) # Maximum phone usage percent
+
+comment4 <- paste0("The maximum percentage of passengers observed using phones on the bus was ", round(max_percent, 1), "%.")
+cat(comment4, "\n")
+
+```
+
+# Graphs
+
+```{r plot1, echo=FALSE}
+
+# Bar Chart 1: Number of Phone Users by Time
+p1 <- latest_data %>%
+  ggplot(aes(x = Time, y = Phone_Users)) +
+  geom_bar(stat = "identity", fill = "steelblue") + # Use geom_bar with stat="identity" to plot y-values directly
+  labs(title = "Number of Phone Users by Time",
+       x = "Time of Observation",
+       y = "Number of Phone Users",
+       caption = "Shows how many passengers were using phones at each observation time.") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels for easier readability
+
+print(p1)
+
+```
+
+```{r plot2, echo=FALSE}
+# Bar Chart 2: Percentage of Passengers Using Phones by Time
+p2 <- latest_data %>%
+  ggplot(aes(x = Time, y = Phone_Percent)) +
+  geom_bar(stat = "identity", fill = "steelblue") + # Use geom_bar with stat="identity" to plot y-values directly
+  labs(title = "Percentage of Passengers Using Phones by Time",
+       x = "Time of Observation",
+       y = "Percentage of passengers using phones (%)",
+       caption = "Shows the percentage of passengers using phones at each observation time.") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels for easier readability
+
+print(p2)
+
+```
+
