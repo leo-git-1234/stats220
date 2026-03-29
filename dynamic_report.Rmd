@@ -1,3 +1,4 @@
+codesharey::rmdtext(text = c(
 ---
 title: My dynamic report
 output: html_fragment
@@ -144,4 +145,5 @@ p2 <- latest_data %>%
 print(p2)
 
 ```
+"))
 
