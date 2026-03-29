@@ -61,11 +61,11 @@ logged_data <- readr::read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1
 # Rename columns to simpler, R-friendly names for easier reference
 latest_data <- logged_data %>%
   rename(
-    Date = Date.of.observation,
-    Time = Time.of.observation,
-    Phone_Users = How.many.passengers.are.using.their.phones.,
-    Total_Passengers = How.many.passengers.can.you.see.on.the.bus.,
-    Unusual_Observations = Any.unusual.observations.or.notes.
+    Date = `Date of observation`,
+    Time = `Time of observation`,
+    Phone_Users = `How many passengers are using their phones?`,
+    Total_Passengers = `How many passengers can you see on the bus?`,
+    Unusual_Observations = `Any unusual observations or notes.`
   ) %>%
   mutate(Phone_Percent = ifelse(
     Total_Passengers > 0, 
