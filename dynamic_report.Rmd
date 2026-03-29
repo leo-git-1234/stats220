@@ -4,7 +4,7 @@ output: html_fragment
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=TRUE, message=TRUE, warning=TRUE, error=TRUE)
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
 
 ```
 
@@ -50,7 +50,7 @@ img{
 
 ## Observing Phone Use Among Bus Passengers
 
-```{r data_prep}
+```{r data_prep, error = TRUE}
 
 # Load necessary libraries for data manipulation and visualization
 suppressPackageStartupMessages(library(tidyverse)) # Load the tidyverse package
