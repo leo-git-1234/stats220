@@ -50,7 +50,7 @@ img{
 
 ## Observing Phone Use Among Bus Passengers
 
-```{r data_prep, error = TRUE}
+```{r data_prep, error = FALSE}
 
 # Load necessary libraries for data manipulation and visualization
 suppressPackageStartupMessages(library(tidyverse)) # Load the tidyverse package
