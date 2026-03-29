@@ -56,7 +56,7 @@ img{
 suppressPackageStartupMessages(library(tidyverse)) # Load the tidyverse package
 
 # Read the CSV data from the provided Google Sheets link
-logged_data <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTeLDMHtbbSEKTXmlMHI_Xx56G79uUAATt1yyA4Q4eS5xRcV92sRXacFiX0nF8PNBGX_dTS03ihS4Kv/pub?gid=1547770&single=true&output=csv")
+logged_data <- readr::read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTeLDMHtbbSEKTXmlMHI_Xx56G79uUAATt1yyA4Q4eS5xRcV92sRXacFiX0nF8PNBGX_dTS03ihS4Kv/pub?gid=1547770&single=true&output=csv")
 
 # Rename columns to simpler, R-friendly names for easier reference
 latest_data <- logged_data %>%
