@@ -1,0 +1,227 @@
+---
+title: My dynamic report
+output: html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+
+```
+
+```{css}
+
+body{
+  font-family: "Segoe UI", "Helvetica", "Arial", sans-serif;
+  color: black;
+  line-height: 1.6;
+  margin: 20px;
+}
+
+h1{
+  font-size: 32px;
+  color: black;
+}
+
+h2{
+  font-size: 24px;
+  color: black;
+}
+
+h3{
+  font-size: 20px;
+  color: black;
+}
+
+p{
+  font-size: 16px;
+}
+
+img{
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.dynamic-text{
+  color: black;
+  font-weight: bold;
+}
+
+```
+
+## Observing Phone Use Among Bus Passengers
+
+```{r data_prep, error=FALSE}
+
+# Load necessary libraries for data manipulation and visualization
+suppressPackageStartupMessages(try(library(tidyverse), silent = TRUE)) # Load the tidyverse package
+
+# Read the CSV data from the provided Google Sheets link
+logged_data <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTeLDMHtbbSEKTXmlMHI_Xx56G79uUAATt1yyA4Q4eS5xRcV92sRXacFiX0nF8PNBGX_dTS03ihS4Kv/pub?gid=1547770&single=true&output=csv")
+
+# Rename columns to simpler, R-friendly names for easier reference
+latest_data <- logged_data %>%
+  rename(
+    Date = `Date of observation`,
+    Time = `Time of observation`,
+    Phone_Users = `How many passengers are using their phones?`,
+    Total_Passengers = `How many passengers can you see on the bus?`,
+    Unusual_Observations = `Any unusual observations or notes?`,
+    Main_activity = `What is the main activity most passangers are doing?`
+  ) %>%
+  mutate(Phone_Percent = ifelse(
+    Total_Passengers > 0, 
+    (Phone_Users / Total_Passengers) * 100,
+    NA
+  ))
+
+latest_data$DateTime <- paste(latest_data$Date, latest_data$Time)
+latest_data$DateTime <- factor(latest_data$DateTime, levels = unique(latest_data$DateTime))
+
+
+```
+
+# Summary statistics
+
+```{r summary, echo=FALSE, results='asis'}
+
+# Summary statistics for amount of people using phones
+avg_users <- mean(latest_data$Phone_Users, na.rm = TRUE) # Average number of passengers using phones
+
+comment1 <- paste0("On average, about ", round(avg_users), " passengers on the bus were using their phones.")
+cat(comment1, "\n")
+
+max_users <- max(latest_data$Phone_Users, na.rm = TRUE) # Maximum number of passengers using phones
+
+comment2 <- paste0("The maximum number of passengers observed using phones on the bus was ", max_users, ".")
+cat(comment2, "\n")
+
+# Calculate summary statistics percentage of people using phones
+avg_percent <- mean(latest_data$Phone_Percent, na.rm = TRUE) # Average phone usage percent
+
+comment3 <- paste0("On average, about ", round(avg_percent, 1), "% of passengers on the bus were using their phones.")
+cat(comment3, "\n")
+
+max_percent <- max(latest_data$Phone_Percent, na.rm = TRUE) # Maximum phone usage percent
+
+comment4 <- paste0("The maximum percentage of passengers observed using phones on the bus was ", round(max_percent, 1), "%.")
+cat(comment4, "\n")
+
+```
+
+# Graphs
+
+```{r plot1, echo=FALSE}
+
+# Bar Chart 1: Percentage of passengers using phones over time
+# Shows proportion of passengers using phones relative to total passengers observed at each observation time and date
+# Tried using ratio, but using percentage was clearer for interpretation
+
+p1 <- latest_data %>%
+  ggplot(aes(x = DateTime, y = Phone_Percent)) +
+  geom_bar(stat = "identity", fill = "steelblue") + 
+  labs(title = "Percentage of Passengers Using Phones by Time and Date",
+       x = "Time of Observation",
+       y = "Percentage of passengers using phones (%)",
+       caption = "Shows the percentage of passengers using phones at each observation time.") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+print(p1)
+
+```
+
+```{r plot2, echo=FALSE}
+
+#Bar Chart 2: Main activities of passengers
+p2 <- latest_data %>% 
+  ggplot() +
+  geom_bar(aes( x= Main_activity, fill = Main_activity)) +
+  labs(title = "Main activities of passengers on the bus",
+       x = "Time of Observation",
+       y = "Main activities",
+       caption = "Shows the range of activities passengers were engaged in during bus journeys, with phone use appearing as the
+       most common behavior compared to other activities.")  +
+  theme_minimal() +
+  theme(axos.text.x = element_text(angle = 45, hjust = 1))
+
+print(p2)
+
+```
+
+
+```{r, echo=FALSE, results='hide'}
+
+# Loads the magick package
+library(magick)
+library(magrittr)
+
+# --- Set the parameters for the meme panels ---
+
+panel_width <- 320 # Width in pixels for each image/text panel.
+panel_height <- 220 # Height in pixels for each image/text panel.
+
+#Reading and resize the first image
+first_image <- image_read("https://img.freepik.com/premium-photo/headphones-journal-woman-bus-travel-with-diary-planning-schedule-notes-university-writing-tech-person-public-transport-listening-music-with-notebook-college_590464-528053.jpg") %>%
+               image_resize(paste0(panel_width, "x", panel_height, "!"))
+
+#Reading and resize the second image
+second_image <- image_read("https://media.istockphoto.com/id/1411636518/photo/multiracial-friends-talking-and-using-a-smartphone-while-riding-a-bus-in-the-city.jpg?s=612x612&w=0&k=20&c=zAm51DNPaD8OecC1Y81bp-u_PEXWRA_fHvXR5ebrIwM=") %>%
+               image_resize(paste0(panel_width, "x", panel_height, "!"))
+
+#Create first text panel
+top_right_text <- image_blank(width = 600,
+                              height = 180,
+                              color = "#FFFFFF") %>%
+  
+  #Adding text to the blank panel
+  image_annotate(text = "Me collecting data on bus passengers",
+                 color = "#000000",
+                 size = 35,
+                 font = "Arial",
+                 gravity = "center")
+
+#Create second text panel
+bottom_right_text <- image_blank(width = 600,
+                                 height = 180,
+                                 color = "#FFFFFF") %>%
+  
+  #Adding text to the blank panel
+  image_annotate(text = "Everyone on their phones",
+                 color = "#000000",
+                 size = 50,
+                 font = "Arial",
+                 gravity = "center")
+
+#Combines first row (top row) horizontally
+first_row <- c(first_image, top_right_text) %>%
+  image_append()
+
+#Combines second row (bottom row) horizontally
+second_row <- c(second_image, bottom_right_text) %>%
+  image_append()
+
+#Stacking the two rows vertically to make the full meme
+meme <- c(first_row, second_row) %>%
+  image_append(stack = TRUE)
+
+#Opens drawing context to add lines
+meme <- image_draw(meme)
+
+#Drawing vertical line to split left and right panels
+abline(v = panel_width, col="#000000", lwd = 5)
+
+#Drawing horizontal line to split the top and bottom panels
+abline(h = panel_height, col="#000000", lwd = 5)
+
+#Close drawing context
+dev.off()
+
+#Saves the meme as a PNG file called "bus_meme.png" into folder
+image_write(meme, "bus_meme.png")
+
+```
+
+# Bus Meme
+
+![](bus_meme.png)
+
